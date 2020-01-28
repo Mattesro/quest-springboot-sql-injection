@@ -45,22 +45,12 @@ public class CustomerRepository {
   public Customer update(String identifier, String newEmail, String newPassword) {
 
     Connection connection = null;
-    Statement statement = null;
     PreparedStatement preparedStatement = null;
     ResultSet resultSet = null;
     Customer customer = null;
 
     try {
-      // Connection and statement
       connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-      StringBuilder queryBuilder = new StringBuilder();
-
-/*
-      preparedStatement = connection.prepareStatement("SELECT * FROM customer WHERE identifier = ? AND password = ?;");
-      preparedStatement.setString(1, identifier);
-      preparedStatement.setString(2, password);
-      resultSet = preparedStatement.executeQuery();
-*/
 
       if (newPassword != "") {
         preparedStatement  = connection.prepareStatement(
@@ -82,9 +72,8 @@ public class CustomerRepository {
         throw new SQLException("failed to update data");
       }
 
-      JdbcUtils.closeStatement(statement);
+      JdbcUtils.closeStatement(preparedStatement);
       JdbcUtils.closeConnection(connection);
-
 
         connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
         preparedStatement = connection.prepareStatement("SELECT * FROM customer WHERE identifier = ?;");
@@ -103,7 +92,7 @@ public class CustomerRepository {
     } catch (SQLException e) {
         e.printStackTrace();
     } finally {
-   	    JdbcUtils.closeStatement(statement);
+   	    JdbcUtils.closeStatement(preparedStatement);
    	    JdbcUtils.closeConnection(connection);
     }
     return null;
